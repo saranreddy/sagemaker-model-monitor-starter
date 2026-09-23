@@ -5,11 +5,7 @@ import sys
 from pathlib import Path
 
 import boto3
-from sagemaker.model_monitor import (
-    CronExpressionGenerator,
-    DataCaptureConfig,
-    DefaultModelMonitor,
-)
+from sagemaker.model_monitor import CronExpressionGenerator, DataCaptureConfig, DefaultModelMonitor
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -25,13 +21,9 @@ def enable_data_capture(config, sagemaker_client):
         sagemaker_client: boto3 SageMaker client
     """
     try:
-        response = sagemaker_client.describe_endpoint_config(
-            EndpointConfigName=config.endpoint_name
-        )
+        response = sagemaker_client.describe_endpoint_config(EndpointConfigName=config.endpoint_name)
 
-        if "DataCaptureConfig" in response and response["DataCaptureConfig"].get(
-            "EnableCapture", False
-        ):
+        if "DataCaptureConfig" in response and response["DataCaptureConfig"].get("EnableCapture", False):
             print(f"Data capture already enabled on endpoint config")
             return
 
@@ -72,9 +64,7 @@ def enable_monitoring():
 
     print(f"\nVerifying endpoint exists...")
     try:
-        endpoint_response = sagemaker_client.describe_endpoint(
-            EndpointName=config.endpoint_name
-        )
+        endpoint_response = sagemaker_client.describe_endpoint(EndpointName=config.endpoint_name)
         endpoint_status = endpoint_response["EndpointStatus"]
         print(f"Endpoint status: {endpoint_status}")
 
@@ -91,13 +81,9 @@ def enable_monitoring():
 
     enable_data_capture(config, sagemaker_client)
 
-    baseline_results_uri = (
-        f"s3://{config.s3_bucket}/{config['baseline_results_s3_prefix']}"
-    )
+    baseline_results_uri = f"s3://{config.s3_bucket}/{config['baseline_results_s3_prefix']}"
     data_capture_uri = f"s3://{config.s3_bucket}/{config['data_capture_s3_prefix']}"
-    monitoring_output_uri = (
-        f"s3://{config.s3_bucket}/{config['monitoring_results_s3_prefix']}"
-    )
+    monitoring_output_uri = f"s3://{config.s3_bucket}/{config['monitoring_results_s3_prefix']}"
 
     print(f"\nCreating DefaultModelMonitor...")
     monitor = DefaultModelMonitor(
@@ -137,9 +123,7 @@ def enable_monitoring():
 
     except Exception as e:
         if "already exists" in str(e).lower():
-            print(
-                f"\nMonitoring schedule '{config.monitor_schedule_name}' already exists."
-            )
+            print(f"\nMonitoring schedule '{config.monitor_schedule_name}' already exists.")
             print("To update, first delete it:")
             print(
                 f"  aws sagemaker delete-monitoring-schedule --monitoring-schedule-name {config.monitor_schedule_name} --region {config.aws_region}"
