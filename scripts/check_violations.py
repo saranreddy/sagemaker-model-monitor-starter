@@ -53,9 +53,7 @@ def check_violations():
         print("\nTroubleshooting:")
         print("  1. Verify data capture is enabled on the endpoint")
         print("  2. Send test traffic to the endpoint")
-        print(
-            "  3. Wait for the monitoring schedule to run (check schedule expression)"
-        )
+        print("  3. Wait for the monitoring schedule to run (check schedule expression)")
         return
 
     print(f"\nFound {len(executions)} recent executions:\n")
@@ -99,9 +97,7 @@ def check_violations():
     print(f"\nProcessing Job: {job_name}")
 
     try:
-        job_details = sagemaker_client.describe_processing_job(
-            ProcessingJobName=job_name
-        )
+        job_details = sagemaker_client.describe_processing_job(ProcessingJobName=job_name)
         outputs = job_details.get("ProcessingOutputConfig", {}).get("Outputs", [])
 
         violations_uri = None
@@ -117,9 +113,7 @@ def check_violations():
         violations_s3_path = violations_uri.replace(f"s3://{config.s3_bucket}/", "")
         violations_key = f"{violations_s3_path}/constraint_violations.json"
 
-        print(
-            f"\nDownloading violations from: s3://{config.s3_bucket}/{violations_key}"
-        )
+        print(f"\nDownloading violations from: s3://{config.s3_bucket}/{violations_key}")
 
         try:
             response = s3_client.get_object(Bucket=config.s3_bucket, Key=violations_key)
@@ -135,9 +129,7 @@ def check_violations():
                 for i, violation in enumerate(violations, 1):
                     print(f"Violation {i}:")
                     print(f"  Feature: {violation.get('feature_name', 'N/A')}")
-                    print(
-                        f"  Constraint: {violation.get('constraint_check_type', 'N/A')}"
-                    )
+                    print(f"  Constraint: {violation.get('constraint_check_type', 'N/A')}")
                     print(f"  Description: {violation.get('description', 'N/A')}")
                     print()
 
@@ -145,16 +137,12 @@ def check_violations():
             print(json.dumps(violations_data, indent=2))
 
         except s3_client.exceptions.NoSuchKey:
-            print(
-                "\nViolations file not found. This may indicate no violations were detected."
-            )
+            print("\nViolations file not found. This may indicate no violations were detected.")
 
     except Exception as e:
         print(f"\nERROR: Failed to retrieve violation details: {e}")
         print("\nYou can check monitoring results in S3:")
-        print(
-            f"  aws s3 ls s3://{config.s3_bucket}/{config['monitoring_results_s3_prefix']}/ --recursive"
-        )
+        print(f"  aws s3 ls s3://{config.s3_bucket}/{config['monitoring_results_s3_prefix']}/ --recursive")
 
 
 if __name__ == "__main__":

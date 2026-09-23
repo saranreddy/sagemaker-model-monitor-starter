@@ -39,9 +39,7 @@ def create_baseline_data(output_dir: str):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="Generate baseline dataset for SageMaker Model Monitor"
-    )
+    parser = argparse.ArgumentParser(description="Generate baseline dataset for SageMaker Model Monitor")
     parser.add_argument(
         "--output-dir",
         type=str,
