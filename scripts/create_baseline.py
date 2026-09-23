@@ -42,7 +42,9 @@ def create_baseline():
         sys.exit(1)
 
     baseline_data_uri = f"s3://{config.s3_bucket}/baseline/baseline.csv"
-    baseline_results_uri = f"s3://{config.s3_bucket}/{config['baseline_results_s3_prefix']}"
+    baseline_results_uri = (
+        f"s3://{config.s3_bucket}/{config['baseline_results_s3_prefix']}"
+    )
 
     print(f"\nUploading baseline data to {baseline_data_uri}...")
     S3Uploader.upload(
@@ -81,7 +83,9 @@ def create_baseline():
         print("=" * 80)
         print(f"\nBaseline results saved to: {baseline_results_uri}")
         print("\nNext steps:")
-        print("  1. Ensure you have an endpoint deployed (or use the MLOps starter endpoint)")
+        print(
+            "  1. Ensure you have an endpoint deployed (or use the MLOps starter endpoint)"
+        )
         print("  2. Run: python scripts/enable_monitoring.py")
 
     except Exception as e:

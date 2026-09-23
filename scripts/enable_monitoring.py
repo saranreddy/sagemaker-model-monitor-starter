@@ -5,11 +5,8 @@ import sys
 from pathlib import Path
 
 import boto3
-from sagemaker.model_monitor import (
-    CronExpressionGenerator,
-    DataCaptureConfig,
-    DefaultModelMonitor,
-)
+from sagemaker.model_monitor import (CronExpressionGenerator,
+                                     DataCaptureConfig, DefaultModelMonitor)
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -35,9 +32,7 @@ def enable_data_capture(config, sagemaker_client):
             print(f"Data capture already enabled on endpoint config")
             return
 
-        print(
-            f"\nWARNING: Data capture not enabled on endpoint {config.endpoint_name}"
-        )
+        print(f"\nWARNING: Data capture not enabled on endpoint {config.endpoint_name}")
         print("To enable data capture, you need to update the endpoint configuration.")
         print("\nFor the MLOps starter endpoint, you can:")
         print("  1. Redeploy with data capture enabled, or")
@@ -93,7 +88,9 @@ def enable_monitoring():
 
     enable_data_capture(config, sagemaker_client)
 
-    baseline_results_uri = f"s3://{config.s3_bucket}/{config['baseline_results_s3_prefix']}"
+    baseline_results_uri = (
+        f"s3://{config.s3_bucket}/{config['baseline_results_s3_prefix']}"
+    )
     data_capture_uri = f"s3://{config.s3_bucket}/{config['data_capture_s3_prefix']}"
     monitoring_output_uri = (
         f"s3://{config.s3_bucket}/{config['monitoring_results_s3_prefix']}"

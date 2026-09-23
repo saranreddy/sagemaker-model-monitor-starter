@@ -41,9 +41,7 @@ def check_violations():
             SortOrder="Descending",
         )
     except sagemaker_client.exceptions.ResourceNotFound:
-        print(
-            f"\nERROR: Monitoring schedule not found: {config.monitor_schedule_name}"
-        )
+        print(f"\nERROR: Monitoring schedule not found: {config.monitor_schedule_name}")
         print("Run: python scripts/enable_monitoring.py")
         sys.exit(1)
 
@@ -55,7 +53,9 @@ def check_violations():
         print("\nTroubleshooting:")
         print("  1. Verify data capture is enabled on the endpoint")
         print("  2. Send test traffic to the endpoint")
-        print("  3. Wait for the monitoring schedule to run (check schedule expression)")
+        print(
+            "  3. Wait for the monitoring schedule to run (check schedule expression)"
+        )
         return
 
     print(f"\nFound {len(executions)} recent executions:\n")
@@ -99,7 +99,9 @@ def check_violations():
     print(f"\nProcessing Job: {job_name}")
 
     try:
-        job_details = sagemaker_client.describe_processing_job(ProcessingJobName=job_name)
+        job_details = sagemaker_client.describe_processing_job(
+            ProcessingJobName=job_name
+        )
         outputs = job_details.get("ProcessingOutputConfig", {}).get("Outputs", [])
 
         violations_uri = None
@@ -115,7 +117,9 @@ def check_violations():
         violations_s3_path = violations_uri.replace(f"s3://{config.s3_bucket}/", "")
         violations_key = f"{violations_s3_path}/constraint_violations.json"
 
-        print(f"\nDownloading violations from: s3://{config.s3_bucket}/{violations_key}")
+        print(
+            f"\nDownloading violations from: s3://{config.s3_bucket}/{violations_key}"
+        )
 
         try:
             response = s3_client.get_object(Bucket=config.s3_bucket, Key=violations_key)
