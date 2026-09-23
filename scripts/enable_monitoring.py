@@ -85,7 +85,7 @@ def enable_monitoring():
     data_capture_uri = f"s3://{config.s3_bucket}/{config['data_capture_s3_prefix']}"
     monitoring_output_uri = f"s3://{config.s3_bucket}/{config['monitoring_results_s3_prefix']}"
 
-    print(f"\nCreating DefaultModelMonitor...")
+    print("\nCreating DefaultModelMonitor...")
     monitor = DefaultModelMonitor(
         role=config.sagemaker_role_arn,
         instance_count=config["monitoring_instance_count"],
@@ -126,7 +126,9 @@ def enable_monitoring():
             print(f"\nMonitoring schedule '{config.monitor_schedule_name}' already exists.")
             print("To update, first delete it:")
             print(
-                f"  aws sagemaker delete-monitoring-schedule --monitoring-schedule-name {config.monitor_schedule_name} --region {config.aws_region}"
+                f"  aws sagemaker delete-monitoring-schedule "
+                f"--monitoring-schedule-name {config.monitor_schedule_name} "
+                f"--region {config.aws_region}"
             )
         else:
             print(f"\nERROR: Failed to create monitoring schedule: {e}")

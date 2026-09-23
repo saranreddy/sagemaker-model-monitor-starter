@@ -3,7 +3,6 @@
 import argparse
 import os
 
-import pandas as pd
 from sklearn.datasets import fetch_california_housing
 
 
@@ -34,7 +33,7 @@ def create_baseline_data(output_dir: str):
     baseline_df.to_csv(output_path, index=False, header=False)
 
     print("Baseline data created successfully")
-    print(f"\nFirst few rows (no header, as required by Model Monitor):")
+    print("\nFirst few rows (no header, as required by Model Monitor):")
     print(baseline_df.head())
 
 
