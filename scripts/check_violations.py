@@ -9,7 +9,7 @@ import boto3
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from src.config import load_config
+from src.config import load_config  # noqa: E402
 
 
 def check_violations():
@@ -26,14 +26,14 @@ def check_violations():
     print("=" * 80)
 
     config = load_config()
-    print(f"\nConfiguration:")
+    print("\nConfiguration:")
     print(f"  Region: {config.aws_region}")
     print(f"  Schedule Name: {config.monitor_schedule_name}")
 
     sagemaker_client = boto3.client("sagemaker", region_name=config.aws_region)
     s3_client = boto3.client("s3", region_name=config.aws_region)
 
-    print(f"\nFetching monitoring executions...")
+    print("\nFetching monitoring executions...")
     try:
         response = sagemaker_client.list_monitoring_executions(
             MonitoringScheduleName=config.monitor_schedule_name,

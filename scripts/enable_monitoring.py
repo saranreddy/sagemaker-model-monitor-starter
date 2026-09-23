@@ -5,11 +5,11 @@ import sys
 from pathlib import Path
 
 import boto3
-from sagemaker.model_monitor import CronExpressionGenerator, DataCaptureConfig, DefaultModelMonitor
+from sagemaker.model_monitor import CronExpressionGenerator, DefaultModelMonitor
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from src.config import load_config
+from src.config import load_config  # noqa: E402
 
 
 def enable_data_capture(config, sagemaker_client):
@@ -24,7 +24,7 @@ def enable_data_capture(config, sagemaker_client):
         response = sagemaker_client.describe_endpoint_config(EndpointConfigName=config.endpoint_name)
 
         if "DataCaptureConfig" in response and response["DataCaptureConfig"].get("EnableCapture", False):
-            print(f"Data capture already enabled on endpoint config")
+            print("Data capture already enabled on endpoint config")
             return
 
         print(f"\nWARNING: Data capture not enabled on endpoint {config.endpoint_name}")
@@ -54,7 +54,7 @@ def enable_monitoring():
     print("=" * 80)
 
     config = load_config()
-    print(f"\nConfiguration:")
+    print("\nConfiguration:")
     print(f"  Region: {config.aws_region}")
     print(f"  Endpoint: {config.endpoint_name}")
     print(f"  Schedule Name: {config.monitor_schedule_name}")
@@ -62,7 +62,7 @@ def enable_monitoring():
 
     sagemaker_client = boto3.client("sagemaker", region_name=config.aws_region)
 
-    print(f"\nVerifying endpoint exists...")
+    print("\nVerifying endpoint exists...")
     try:
         endpoint_response = sagemaker_client.describe_endpoint(EndpointName=config.endpoint_name)
         endpoint_status = endpoint_response["EndpointStatus"]
@@ -93,7 +93,7 @@ def enable_monitoring():
         max_runtime_in_seconds=config["monitoring_max_runtime_seconds"],
     )
 
-    print(f"\nCreating monitoring schedule...")
+    print("\nCreating monitoring schedule...")
     print(f"  Baseline: {baseline_results_uri}")
     print(f"  Data Capture: {data_capture_uri}")
     print(f"  Monitoring Output: {monitoring_output_uri}")

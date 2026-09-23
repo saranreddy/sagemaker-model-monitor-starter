@@ -4,14 +4,12 @@
 import sys
 from pathlib import Path
 
-import boto3
-from sagemaker import get_execution_role
 from sagemaker.model_monitor import DefaultModelMonitor
 from sagemaker.s3 import S3Uploader
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from src.config import load_config
+from src.config import load_config  # noqa: E402
 
 
 def create_baseline():
@@ -29,7 +27,7 @@ def create_baseline():
     print("=" * 80)
 
     config = load_config()
-    print(f"\nConfiguration:")
+    print("\nConfiguration:")
     print(f"  Region: {config.aws_region}")
     print(f"  S3 Bucket: {config.s3_bucket}")
     print(f"  Baseline Job Name: {config['baseline_job_name']}")
@@ -51,7 +49,7 @@ def create_baseline():
     )
     print("Baseline data uploaded successfully")
 
-    print(f"\nCreating DefaultModelMonitor...")
+    print("\nCreating DefaultModelMonitor...")
     monitor = DefaultModelMonitor(
         role=config.sagemaker_role_arn,
         instance_count=config["baseline_instance_count"],
@@ -59,11 +57,11 @@ def create_baseline():
         max_runtime_in_seconds=config["baseline_max_runtime_seconds"],
     )
 
-    print(f"\nSuggesting baseline (this will run a SageMaker Processing job)...")
+    print("\nSuggesting baseline (this will run a SageMaker Processing job)...")
     print(f"  Input: {baseline_data_uri}")
     print(f"  Output: {baseline_results_uri}")
     print(f"  Instance: {config['baseline_instance_type']}")
-    print(f"\nThis may take 5-10 minutes. Monitor progress in the AWS Console:")
+    print("\nThis may take 5-10 minutes. Monitor progress in the AWS Console:")
     print(f"  SageMaker → Processing → Jobs → {config['baseline_job_name']}")
 
     try:
