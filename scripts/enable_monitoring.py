@@ -5,8 +5,11 @@ import sys
 from pathlib import Path
 
 import boto3
-from sagemaker.model_monitor import (CronExpressionGenerator,
-                                     DataCaptureConfig, DefaultModelMonitor)
+from sagemaker.model_monitor import (
+    CronExpressionGenerator,
+    DataCaptureConfig,
+    DefaultModelMonitor,
+)
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
