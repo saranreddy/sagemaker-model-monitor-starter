@@ -1,0 +1,125 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  terraform:
+    name: Terraform Validation
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: infra
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.6.0"
+
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
+
+      - name: Terraform Init
+        run: terraform init -backend=false
+
+      - name: Terraform Validate
+        run: terraform validate
+
+  python:
+    name: Python Lint & Test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Cache pip dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest flake8 black isort
+
+      - name: Check code formatting with Black
+        run: black --check src/ scripts/ tests/
+
+      - name: Check import sorting with isort
+        run: isort --check-only src/ scripts/ tests/
+
+      - name: Lint with flake8
+        run: |
+          flake8 src/ scripts/ tests/ \
+            --max-line-length=120 \
+            --extend-ignore=E203,W503 \
+            --exclude=venv,.venv,__pycache__
+
+      - name: Run tests
+        run: pytest tests/ -v --tb=short
+
+  config-validation:
+    name: Validate Config Example
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check config example exists
+        run: |
+          if [ ! -f config/config.example.yaml ]; then
+            echo "Error: config/config.example.yaml not found"
+            exit 1
+          fi
+
+      - name: Validate YAML syntax
+        run: |
+          python -c "import yaml; yaml.safe_load(open('config/config.example.yaml'))"
+
+  documentation:
+    name: Documentation Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check README exists and is not empty
+        run: |
+          if [ ! -f README.md ]; then
+            echo "Error: README.md not found"
+            exit 1
+          fi
+          if [ ! -s README.md ]; then
+            echo "Error: README.md is empty"
+            exit 1
+          fi
+
+      - name: Check for required README sections
+        run: |
+          grep -q "## Architecture" README.md || { echo "Missing Architecture section"; exit 1; }
+          grep -q "## Prerequisites" README.md || { echo "Missing Prerequisites section"; exit 1; }
+          grep -q "## Cost" README.md || { echo "Missing Cost section"; exit 1; }
+          echo "All required README sections present"

@@ -1,0 +1,53 @@
+# SageMaker Model Monitor Configuration
+# Copy this file to config.yaml and update with your values
+
+# AWS Configuration
+# CRITICAL: This region MUST match:
+#   1. Your AWS CLI configured region: aws configure get region
+#   2. Your Terraform region (infra/terraform.tfvars or default)
+#   3. The region where your endpoint is deployed
+# Region mismatch is the most common failure mode.
+aws_region: us-east-1
+
+# IAM Role (from terraform output sagemaker_role_arn)
+# Do NOT leave placeholder account IDs like 123456789012
+sagemaker_role_arn: arn:aws:iam::123456789012:role/sagemaker-model-monitor-execution-role
+
+# S3 Bucket (from terraform output s3_bucket_name)
+s3_bucket: sagemaker-model-monitor-123456789012
+
+# Model Monitor Schedule Configuration
+monitor_schedule_name: housing-data-quality-monitor
+schedule_expression: cron(0 * ? * * *)  # Hourly
+
+# Endpoint Configuration
+# If using companion mode with the MLOps starter, use the endpoint from that repo
+# If using standalone mode, you'll create a simple endpoint with the scripts
+endpoint_name: california-housing-endpoint
+
+# Baseline Configuration
+baseline_dataset_s3_uri: null  # Will be set to s3://{bucket}/baseline/baseline.csv
+baseline_job_name: housing-baseline-job
+baseline_instance_type: ml.m5.xlarge
+baseline_instance_count: 1
+baseline_max_runtime_seconds: 3600
+
+# Monitoring Job Configuration
+monitoring_instance_type: ml.m5.xlarge
+monitoring_instance_count: 1
+monitoring_max_runtime_seconds: 3600
+
+# Data Capture Configuration (for real-time endpoints)
+data_capture_percentage: 100  # Capture 100% of requests (for demo; reduce in production)
+data_capture_s3_prefix: data-capture
+
+# Outputs
+baseline_results_s3_prefix: baseline-results
+monitoring_results_s3_prefix: monitoring-results
+monitoring_reports_s3_prefix: monitoring-reports
+
+# Constraints (optional thresholds for monitoring)
+# Set to null to use auto-suggested constraints from baseline
+constraints:
+  max_missing_percentage: 10.0  # Alert if >10% missing values
+  max_drift_percentage: 20.0    # Alert if >20% distribution drift

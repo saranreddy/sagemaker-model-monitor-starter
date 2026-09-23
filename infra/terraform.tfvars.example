@@ -1,0 +1,8 @@
+# AWS region (must match your AWS CLI configured region and config.yaml)
+aws_region = "us-east-1"
+
+# Project name prefix (used for resource naming)
+project_name = "sagemaker-model-monitor"
+
+# S3 bucket name (leave empty to auto-generate: sagemaker-model-monitor-{account-id})
+s3_bucket_name = ""
