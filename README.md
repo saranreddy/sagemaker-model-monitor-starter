@@ -27,7 +27,7 @@ This starter is for teams that **already have a model deployed to a SageMaker re
 - You need **model quality** (accuracy/precision drift), **bias**, or **explainability** monitoring — this starter only covers **data quality** monitoring (input feature drift and schema validation)
 - Your team already uses a third-party monitoring platform (Evidently AI, Arize, WhyLabs, etc.) and doesn't need SageMaker's built-in monitoring
 
-**Cost note:** SageMaker monitoring schedules run recurring processing jobs. An hourly schedule costs ~$108/month in compute alone (ml.m5.xlarge). Always stop and delete monitoring schedules when not actively needed.
+**Cost note:** SageMaker monitoring schedules run recurring processing jobs. At the default hourly schedule on ml.m5.xlarge that is roughly $108/month for the monitoring jobs alone (daily is about $1.50/month), and the endpoint being monitored bills separately while it runs. Delete schedules and endpoints when you are done.
 
 ## Features
 
