@@ -10,6 +10,25 @@ Companion to [sagemaker-mlops-pipeline-starter](https://github.com/saranreddy/sa
 
 Built with best practices for clarity, maintainability, and professional ML operations.
 
+## When to Use This Starter
+
+This starter is for teams that **already have a model deployed to a SageMaker real-time endpoint** and need to detect when production input data drifts from training data.
+
+**Good fit when:**
+- You have a model serving predictions on a SageMaker endpoint and need to catch data quality issues (schema changes, distribution drift, unexpected nulls)
+- You're an MLOps engineer adding production monitoring to an existing deployment
+- Your team needs audit evidence that models are continuously monitored (common in regulated industries like credit risk, fraud detection, or pricing)
+- You want alerts when input feature distributions shift from the training baseline
+- You're already using the [MLOps pipeline starter](https://github.com/saranreddy/sagemaker-mlops-pipeline-starter) and want to add monitoring to your deployed endpoint
+
+**Not a good fit when:**
+- You don't have a real-time SageMaker endpoint yet — start with the [pipeline starter](https://github.com/saranreddy/sagemaker-mlops-pipeline-starter) to train and deploy a model first
+- You only do batch scoring and don't need real-time monitoring — a simpler data validation job in your batch pipeline may be more appropriate
+- You need **model quality** (accuracy/precision drift), **bias**, or **explainability** monitoring — this starter only covers **data quality** monitoring (input feature drift and schema validation)
+- Your team already uses a third-party monitoring platform (Evidently AI, Arize, WhyLabs, etc.) and doesn't need SageMaker's built-in monitoring
+
+**Cost note:** SageMaker monitoring schedules run recurring processing jobs. An hourly schedule costs ~$108/month in compute alone (ml.m5.xlarge). Always stop and delete monitoring schedules when not actively needed.
+
 ## Features
 
 - **Data Quality Monitoring** with automatic baseline generation and scheduled monitoring jobs
