@@ -41,49 +41,9 @@ This starter is for teams that **already have a model deployed to a SageMaker re
 
 ## Architecture
 
-```mermaid
-graph TB
-    subgraph "Baseline Creation"
-        A[Baseline Dataset] -->|CSV| B[SageMaker Processing Job]
-        B -->|suggest_baseline| C[Baseline Statistics]
-        B --> D[Baseline Constraints]
-        C --> E[S3: baseline-results/]
-        D --> E
-    end
-    
-    subgraph "Real-time Inference & Capture"
-        F[Client] -->|Predictions| G[SageMaker Endpoint]
-        G -->|Data Capture Enabled| H[S3: data-capture/]
-    end
-    
-    subgraph "Monitoring Schedule"
-        I[Hourly Cron Schedule] -->|Triggers| J[Monitoring Job]
-        H -->|Input Data| J
-        E -->|Baseline| J
-        J -->|Compare & Analyze| K{Violations?}
-        K -->|Yes| L[Constraint Violations JSON]
-        K -->|No| M[No Violations]
-        L --> N[S3: monitoring-results/]
-        M --> N
-    end
-    
-    subgraph "Violation Detection"
-        O[check_violations.py] -->|List Executions| P[SageMaker API]
-        O -->|Download Reports| N
-        O -->|Display| Q[Console Output]
-    end
-    
-    subgraph "AWS Resources Terraform"
-        R[S3 Bucket]
-        S[IAM Execution Role]
-    end
-    
-    B -.-> S
-    J -.-> S
-    E -.-> R
-    H -.-> R
-    N -.-> R
-```
+![AWS Architecture for SageMaker Model Monitor - showing Terraform deployment of S3 bucket and IAM role, baseline creation workflow, existing SageMaker endpoint with data capture, monitoring schedule with hourly jobs, and violation detection](docs/architecture.png)
+
+*The diagram is generated from `docs/architecture.py` (requires `pip install diagrams` and Graphviz; running `python docs/architecture.py` writes architecture.png next to the script).*
 
 ## Prerequisites
 
